@@ -5,21 +5,20 @@ import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
 import "./LoginPage.css";
 import Button from "@mui/material/Button";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../redux/store";
+import { useNavigate } from "react-router-dom";
 
 interface ILoginPageProps {
   isLoggedIn: (data: boolean) => void;
 }
 
 const LoginPage = (props: ILoginPageProps) => {
-  const dispatch = useDispatch<AppDispatch>();
   const [userEmail, setUserEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isInvalid, setIsInvalid] = useState(false);
+  const navigate = useNavigate();
 
-  function handleClickEvent() {
+  function handleLoginEvent() {
     if (userEmail !== "" && enteredPassword !== "") {
       handleValidation();
     } else {
@@ -41,8 +40,9 @@ const LoginPage = (props: ILoginPageProps) => {
       numberPattern.test(enteredPassword) &&
       specialCharPattern.test(enteredPassword)
     ) {
-      localStorage.setItem("User_ID", userEmail + enteredPassword);
+      localStorage.setItem("User_ID", `${userEmail}${enteredPassword}`);
       setErrorMessage("");
+      navigate('/home');
       props.isLoggedIn(true);
     } else {
       setIsInvalid(true);
@@ -56,7 +56,7 @@ const LoginPage = (props: ILoginPageProps) => {
         <Avatar src="/broken-image.jpg" />
       </span>
       <div>
-        <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+        <Box sx={{ display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
           <TextField
             value={userEmail}
             id="input-with-sx"
@@ -65,7 +65,7 @@ const LoginPage = (props: ILoginPageProps) => {
             onChange={(e) => setUserEmail(e.target.value)}
           />
         </Box>
-        <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+        <Box sx={{ display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
           <TextField
             value={enteredPassword}
             id="input-with-sx"
@@ -84,7 +84,7 @@ const LoginPage = (props: ILoginPageProps) => {
         <Button
           variant="contained"
           className="login-style"
-          onClick={handleClickEvent}
+          onClick={handleLoginEvent}
         >
           Login
         </Button>

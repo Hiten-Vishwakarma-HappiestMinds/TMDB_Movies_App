@@ -1,0 +1,39 @@
+.movie-details-image-container {
+    /* position: absolute;
+    left: 35%; */
+    display: flex;
+    justify-content: center;
+}
+
+.movie-details-image {
+    object-fit: fill !important;
+    width: 30rem !important;
+    height: 20rem !important;
+}
+
+.movie-title {
+    display: flex;
+    padding-left: 1rem;
+    font-size: large;
+    font-weight: 800;
+}
+
+.favourite-icon {
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+    top: -1.5rem;
+    padding-right: 2rem;
+    cursor: pointer;
+}
+
+.red-favourite-icon path {
+        color: red !important;
+}
+
+.movie-overview {
+    font-size: 1rem;
+    font-weight: 400;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}

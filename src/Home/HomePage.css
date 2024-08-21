@@ -1,0 +1,24 @@
+.subHeader {
+  position: relative;
+  top: 5rem;
+}
+
+.movies-list {
+  position: relative;
+  top: 4.5rem;
+}
+
+.all-movies-button {
+  position: relative;
+  top: 6rem;
+  display: flex;
+  justify-content: center;
+}
+.movie-image {
+  object-fit: contain !important;
+  cursor: pointer;
+}
+
+.red-fav-icon path {
+  color: red !important;
+}
