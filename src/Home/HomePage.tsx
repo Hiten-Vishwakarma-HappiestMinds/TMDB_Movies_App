@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Header from "./Header";
 import Chip from "@mui/material/Chip";
 import "./HomePage.css";
-import GenrePage from "./GenrePage";
 import Card from "@mui/joy/Card";
 import AspectRatio from "@mui/joy/AspectRatio";
 import Box from "@mui/joy/Box";
@@ -12,12 +11,13 @@ import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded
 import Divider from "@mui/joy/Divider";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { Button } from "@mui/material";
-import MovieDetails from "./MovieDetails";
 import { useNavigate } from "react-router-dom";
 import {
   addFavoriteMovies,
   removeFavoriteMovies,
-  showSelectedPopularMovie,
+  showGenreList,
+  showGenreTitle,
+  showMovieDetails,
 } from "../redux/slices/MoviesSlice";
 import { AppDispatch, RootState } from "../redux/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -39,7 +39,6 @@ const token =
 
 const HomePage = () => {
   const [genresList, setGenresList] = useState<genreData[]>([]);
-  const [showGenrePage, setShowGenrePage] = useState(false);
   const [popularMoviesList, setPopularMoviesList] = useState<popularMovies[]>(
     []
   );
@@ -47,14 +46,8 @@ const HomePage = () => {
     []
   );
   const [showAllmMovies, setShowAllMovies] = useState(false);
-  const [showSelectedMovieInfo, setShowSelectedMovieInfo] = useState(false);
-  const [selectedMovie, setSelectedMovie] = useState();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const [showSelectedGenreList, setShowSelectedGenreList] = useState<
-    popularMovies[]
-  >([]);
-  const [genreTitle, setGenreTitle] = useState("");
   const addMovieToFavList = useSelector(
     (state: RootState) => state.moviesState.favMovies
   );
@@ -77,7 +70,6 @@ const HomePage = () => {
     );
     if (response.status === 200) {
       const data = await response.json();
-      console.log(data);
       setGenresList(data.genres);
     }
   };
@@ -95,12 +87,11 @@ const HomePage = () => {
     );
     if (response.status === 200) {
       const data = await response.json();
-      console.log(data);
-      setShowGenrePage(true);
-      setShowSelectedGenreList(data.results);
+      navigate("/genre");
+      dispatch(showGenreList(data.results));
     }
     const title = genresList.filter((item: genreData) => item.id === genre.id);
-    setGenreTitle(title[0].name);
+    dispatch(showGenreTitle(title[0].name));
   };
 
   const fetchPopularMovies = async () => {
@@ -139,10 +130,8 @@ const HomePage = () => {
   };
 
   const showMovieDetailsHandler = (item: any) => {
-    // window.open("/movie_details", "_blank");
-    // dispatch(showSelectedPopularMovie(item));
-    setSelectedMovie(item);
-    setShowSelectedMovieInfo(true);
+    navigate("/movie_details");
+    dispatch(showMovieDetails(item));
   };
 
   const handleFavoriteMovie = (movie: any) => {
@@ -158,20 +147,70 @@ const HomePage = () => {
 
   return (
     <>
-      {!showGenrePage && !showSelectedMovieInfo && (
-        <>
-          <Header />
-          <div className="subHeader">
-            {genresList.map((genre: genreData) => (
-              <Chip
-                key={genre.id}
-                label={genre.name}
-                onClick={() => handleGenreClick(genre)}
-                // onClick={() => window.open(`/genre/${genre.id}`, "_blank")}
-                style={{ margin: "5px" }}
-              />
+      <Header />
+      <>
+        <div className="subHeader">
+          {genresList.map((genre: genreData) => (
+            <Chip
+              key={genre.id}
+              label={genre.name}
+              onClick={() => handleGenreClick(genre)}
+              style={{ margin: "5px" }}
+            />
+          ))}
+        </div>
+        <div className="movies-list">
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              py: 1,
+              overflow: "auto",
+              width: 1270,
+              scrollSnapType: "x mandatory",
+              "& > *": {
+                scrollSnapAlign: "center",
+              },
+              "::-webkit-scrollbar": { display: "none" },
+            }}
+          >
+            {popularMoviesList.map((item: popularMovies) => (
+              <Card
+                orientation="vertical"
+                size="sm"
+                key={item.title}
+                variant="outlined"
+              >
+                <AspectRatio ratio="4/3" sx={{ width: 280 }}>
+                  <img
+                    src={`https://image.tmdb.org/t/p/w500/${item.poster_path}`}
+                    alt={item.title}
+                    onClick={() => showMovieDetailsHandler(item)}
+                    className="movie-image"
+                  />
+                </AspectRatio>
+                <Box
+                  sx={{
+                    whiteSpace: "wrap",
+                    mx: 1,
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Typography level="title-md">{item.title}</Typography>
+                </Box>
+              </Card>
             ))}
+          </Box>
+        </div>
+        {!showAllmMovies && (
+          <div className="all-movies-button">
+            <Button variant="contained" onClick={fetchAllMovies}>
+              All Movies
+            </Button>
           </div>
+        )}
+        {showAllmMovies && (
           <div className="movies-list">
             <Box
               sx={{
@@ -187,11 +226,11 @@ const HomePage = () => {
                 "::-webkit-scrollbar": { display: "none" },
               }}
             >
-              {popularMoviesList.map((item: popularMovies) => (
+              {allTrendingMovies.map((item: popularMovies) => (
                 <Card
                   orientation="vertical"
                   size="sm"
-                  key={item.title}
+                  key={item.id}
                   variant="outlined"
                 >
                   <AspectRatio ratio="4/3" sx={{ width: 280 }}>
@@ -199,101 +238,39 @@ const HomePage = () => {
                       src={`https://image.tmdb.org/t/p/w500/${item.poster_path}`}
                       alt={item.title}
                       onClick={() => showMovieDetailsHandler(item)}
-                      // onClick={() => window.open(`/movie_details`, '_blank')}
                       className="movie-image"
                     />
                   </AspectRatio>
-                  <Box
-                    sx={{
-                      whiteSpace: "wrap",
-                      mx: 1,
-                      display: "flex",
-                      justifyContent: "center",
-                    }}
-                  >
+                  <Box sx={{ whiteSpace: "wrap", mx: 2 }}>
                     <Typography level="title-md">{item.title}</Typography>
+                    &nbsp;&nbsp;
+                    <Divider orientation="vertical" />
+                    &nbsp;&nbsp;
+                    <Typography level="title-md">
+                      {Math.round(item.vote_average * 10) / 10}/10
+                    </Typography>
+                    <IconButton
+                      size="sm"
+                      variant="plain"
+                      color="neutral"
+                      sx={{ ml: "auto", alignSelf: "flex-start" }}
+                      onClick={() => handleFavoriteMovie(item)}
+                    >
+                      {addMovieToFavList.some(
+                        (movie: any) => movie.id === item.id
+                      ) ? (
+                        <FavoriteIcon className="red-fav-icon" />
+                      ) : (
+                        <FavoriteBorderRoundedIcon />
+                      )}
+                    </IconButton>
                   </Box>
                 </Card>
               ))}
             </Box>
           </div>
-          {!showAllmMovies && (
-            <div className="all-movies-button">
-              <Button variant="contained" onClick={fetchAllMovies}>
-                All Movies
-              </Button>
-            </div>
-          )}
-          {showAllmMovies && (
-            <div className="movies-list">
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: 1,
-                  py: 1,
-                  overflow: "auto",
-                  width: 1270,
-                  scrollSnapType: "x mandatory",
-                  "& > *": {
-                    scrollSnapAlign: "center",
-                  },
-                  "::-webkit-scrollbar": { display: "none" },
-                }}
-              >
-                {allTrendingMovies.map((item: popularMovies) => (
-                  <Card
-                    orientation="vertical"
-                    size="sm"
-                    key={item.id}
-                    variant="outlined"
-                  >
-                    <AspectRatio ratio="4/3" sx={{ width: 280 }}>
-                      <img
-                        src={`https://image.tmdb.org/t/p/w500/${item.poster_path}`}
-                        alt={item.title}
-                        onClick={() => showMovieDetailsHandler(item)}
-                        // onClick={() => window.open(`/movie_details`, "_blank")}
-                        className="movie-image"
-                      />
-                    </AspectRatio>
-                    <Box sx={{ whiteSpace: "wrap", mx: 2 }}>
-                      <Typography level="title-md">{item.title}</Typography>
-                      &nbsp;&nbsp;
-                      <Divider orientation="vertical" />
-                      &nbsp;&nbsp;
-                      <Typography level="title-md">
-                        {Math.round(item.vote_average * 10) / 10}
-                      </Typography>
-                      <IconButton
-                        size="sm"
-                        variant="plain"
-                        color="neutral"
-                        sx={{ ml: "auto", alignSelf: "flex-start" }}
-                        onClick={() => handleFavoriteMovie(item)}
-                      >
-                        {addMovieToFavList.some(
-                          (movie: any) => movie.id === item.id
-                        ) ? (
-                          <FavoriteIcon className="red-fav-icon" />
-                        ) : (
-                          <FavoriteBorderRoundedIcon />
-                        )}
-                      </IconButton>
-                    </Box>
-                  </Card>
-                ))}
-              </Box>
-            </div>
-          )}
-        </>
-      )}
-      {showGenrePage && (
-        <GenrePage
-          showSelectedGenre={showSelectedGenreList}
-          genreTitle={genreTitle}
-        />
-      )}
-      {showSelectedMovieInfo && <MovieDetails selectedMovie={selectedMovie} />}
+        )}
+      </>
     </>
   );
 };

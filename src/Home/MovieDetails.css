@@ -1,8 +1,7 @@
 .movie-details-image-container {
-    /* position: absolute;
-    left: 35%; */
     display: flex;
     justify-content: center;
+    margin-top: 5.2rem;
 }
 
 .movie-details-image {

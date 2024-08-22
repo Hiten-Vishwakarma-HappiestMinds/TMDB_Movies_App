@@ -31,14 +31,9 @@ const Header = () => {
     dispatch(showLogoutConfirmation());
   };
 
-  const openHomePageInNewTab = () => {
-    const homePageUrl = window.location.origin;
-    window.open(homePageUrl, "_blank");
-  };
-
   return (
     <header className="main-header">
-      <h1 onClick={openHomePageInNewTab}>TMDB Movies</h1>
+      <h1 onClick={() => navigate("/home")}>TMDB Movies</h1>
       <nav className="navigation-menu">
         <ul>
           <li>

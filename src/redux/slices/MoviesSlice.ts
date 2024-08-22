@@ -2,14 +2,18 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface MovieState {
   showLogoutConfirmation: boolean;
-  selectedPopularMovie: any;
   favMovies: any;
+  genreList: any;
+  genreTitle: string;
+  movieDetails: any;
 }
 
 const initialState: MovieState = {
   showLogoutConfirmation: false,
-  selectedPopularMovie: [],
   favMovies: [],
+  genreList: [],
+  genreTitle: "",
+  movieDetails: []
 };
 
 const moviesSlice = createSlice({
@@ -22,20 +26,8 @@ const moviesSlice = createSlice({
     hideLogoutConfirmation: (state: MovieState) => {
       state.showLogoutConfirmation = false;
     },
-    showSelectedPopularMovie: (
-      state: MovieState,
-      action: PayloadAction<any>
-    ) => {
-      const  selectedMovie = action.payload;
-      console.log('selected', selectedMovie);
-      if(selectedMovie) {
-        state.selectedPopularMovie = selectedMovie;
-      }
-    },
     addFavoriteMovies: (state: MovieState, action: PayloadAction<any>) => {
       const newFavMovies = action.payload;
-      console.log('newFavMovies', newFavMovies);
-      
       const exists = state.favMovies.some(
         (favMovie: any) => favMovie.id === newFavMovies.id
       );
@@ -43,12 +35,21 @@ const moviesSlice = createSlice({
         state.favMovies.push(newFavMovies);
       }
     },
-    removeFavoriteMovies: (state, action) => {
+    removeFavoriteMovies: (state: MovieState, action: PayloadAction<any>) => {
       const movieId = action.payload;
       // Filter out the movie with the given ID
       state.favMovies = state.favMovies.filter(
         (movie: any) => movie.id !== movieId
       );
+    },
+    showGenreList: (state: MovieState, action: PayloadAction<any>) => {
+      state.genreList.push(action.payload);
+    },
+    showGenreTitle: (state: MovieState, action: PayloadAction<any>) => {
+      state.genreTitle = action.payload;
+    },
+    showMovieDetails: (state: MovieState, action: PayloadAction<any>) => {
+      state.movieDetails.push(action.payload);
     },
   },
 });
@@ -56,9 +57,11 @@ const moviesSlice = createSlice({
 export const {
   showLogoutConfirmation,
   hideLogoutConfirmation,
-  showSelectedPopularMovie,
   addFavoriteMovies,
   removeFavoriteMovies,
+  showGenreList,
+  showGenreTitle,
+  showMovieDetails
 } = moviesSlice.actions;
 
 export default moviesSlice.reducer;

@@ -1,19 +1,18 @@
-.fav-movie-container h1 {
-  display: flex;
-  justify-content: center;
-}
-
 .fav-movie-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 16px;
   padding: 16px;
+  margin-top: 5rem;
 }
+
 img {
   width: 200px;
   height: auto;
 }
 
-h3 {
-  font-size: 1.2rem;
+.no-fav-message {
+  position: absolute;
+  top: 40%;
+  left: 40%;
 }

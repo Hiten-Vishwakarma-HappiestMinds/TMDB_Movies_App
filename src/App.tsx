@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import LoginPage from "./login/LoginPage";
 import HomePage from "./Home/HomePage";
@@ -55,11 +55,21 @@ function App() {
             element={isAuthenticated ? <HomePage /> : <Navigate to="/" />}
           />
           <Route
+            path="/home"
+            element={isAuthenticated ? <HomePage /> : <Navigate to="/" />}
+          />
+          <Route
             path="/favourites"
             element={isAuthenticated ? <MyFavourites /> : <Navigate to="/" />}
           />
-          {/* <Route path="/movie_details" element={<MovieDetails />} /> */}
-          {/* <Route path="/genre/:genreId" element={<GenrePage />} /> */}
+          <Route
+            path="/genre"
+            element={isAuthenticated ? <GenrePage /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/movie_details"
+            element={isAuthenticated ? <MovieDetails /> : <Navigate to="/" />}
+          />
         </Routes>
       </Router>
       {showPopup && (
