@@ -13,7 +13,7 @@ const initialState: MovieState = {
   favMovies: [],
   genreList: [],
   genreTitle: "",
-  movieDetails: []
+  movieDetails: [],
 };
 
 const moviesSlice = createSlice({
@@ -43,7 +43,7 @@ const moviesSlice = createSlice({
       );
     },
     showGenreList: (state: MovieState, action: PayloadAction<any>) => {
-      state.genreList.push(action.payload);
+      state.genreList = action.payload;
     },
     showGenreTitle: (state: MovieState, action: PayloadAction<any>) => {
       state.genreTitle = action.payload;
@@ -61,7 +61,7 @@ export const {
   removeFavoriteMovies,
   showGenreList,
   showGenreTitle,
-  showMovieDetails
+  showMovieDetails,
 } = moviesSlice.actions;
 
 export default moviesSlice.reducer;

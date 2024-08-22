@@ -24,7 +24,7 @@ const GenrePage = () => {
     (state: RootState) => state.moviesState.favMovies
   );
   const addGenreList = useSelector(
-    (state: RootState) => state.moviesState.genreList[0]
+    (state: RootState) => state.moviesState.genreList
   );
   const genreTitle = useSelector(
     (state: RootState) => state.moviesState.genreTitle
