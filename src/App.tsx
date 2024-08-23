@@ -55,10 +55,6 @@ function App() {
             element={isAuthenticated ? <HomePage /> : <Navigate to="/" />}
           />
           <Route
-            path="/home"
-            element={isAuthenticated ? <HomePage /> : <Navigate to="/" />}
-          />
-          <Route
             path="/favourites"
             element={isAuthenticated ? <MyFavourites /> : <Navigate to="/" />}
           />
